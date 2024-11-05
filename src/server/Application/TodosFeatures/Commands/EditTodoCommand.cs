@@ -1,6 +1,7 @@
 ﻿using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shared;
 
 
@@ -8,6 +9,7 @@ namespace Application.TodosFeatures.Commands;
 
 public class EditTodoCommand : IRequest<IActionResult>
 {
+    public Guid Id { get; set; }
     public string TodoBody { get; set; }
     public DateTime Date { get; set; }
 }
@@ -23,13 +25,17 @@ public class EditTodoCommandHandler : IRequestHandler<EditTodoCommand, IActionRe
 
     public async Task<IActionResult> Handle(EditTodoCommand request, CancellationToken cancellationToken)
     {
-        var todo = new Todo
-        {
-            ExpirenceDate = request.Date,
-            TodoBody = request.TodoBody,
-        };
+        var todoRequested = await _context.Todos.Where(x => x.Id == request.Id).FirstOrDefaultAsync(cancellationToken);
 
-        _context.Todos.Add(todo);
+        if (todoRequested == null)
+            return new BadRequestObjectResult("");
+
+        if (!string.IsNullOrEmpty(request.TodoBody))
+            todoRequested.TodoBody = request.TodoBody;
+
+        todoRequested.ExpirenceDate = request.Date;
+
+        _context.Todos.Update(todoRequested);
 
         try
         {
@@ -40,7 +46,7 @@ public class EditTodoCommandHandler : IRequestHandler<EditTodoCommand, IActionRe
             Console.WriteLine(ex.ToString());
         }
 
-        return new OkObjectResult(todo);
+        return new OkObjectResult("success");
     }
 }
 

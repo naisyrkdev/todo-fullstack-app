@@ -1,7 +1,6 @@
 ﻿namespace TodoWebApi.Models.RequestModels;
 
-public class EditTodoRequest
+public class EditTodoRequest : CreateTodoRequest
 {
-    public string TodoBody { get; set; }
-    public DateTime Date { get; set; }
+    public Guid Id { get; set; }
 }

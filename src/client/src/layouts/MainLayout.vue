@@ -10,10 +10,7 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
-
-        <q-toolbar-title> Quasar App </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-toolbar-title> Todo App </q-toolbar-title>
       </q-toolbar>
     </q-header>
 

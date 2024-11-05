@@ -40,7 +40,7 @@ public class AddTodoCommandHandler : IRequestHandler<AddTodoCommand, IActionResu
             Console.WriteLine(ex.ToString());
         }
 
-        return new OkObjectResult(todo);
+        return new OkObjectResult("Success");
     }
 }
 

@@ -112,6 +112,96 @@ export class TodosClient {
     return Promise.resolve<FileResponse | null>(null as any);
   }
 
+  getTodoByIdRequest(
+    id: string,
+    cancelToken?: CancelToken
+  ): Promise<FileResponse | null> {
+    let url_ = this.baseUrl + '/Todos/{id}';
+    if (id === undefined || id === null)
+      throw new Error("The parameter 'id' must be defined.");
+    url_ = url_.replace('{id}', encodeURIComponent('' + id));
+    url_ = url_.replace(/[?&]$/, '');
+
+    let options_: AxiosRequestConfig = {
+      responseType: 'blob',
+      method: 'GET',
+      url: url_,
+      headers: {
+        Accept: 'application/octet-stream',
+      },
+      cancelToken,
+    };
+
+    return this.instance
+      .request(options_)
+      .catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+          return _error.response;
+        } else {
+          throw _error;
+        }
+      })
+      .then((_response: AxiosResponse) => {
+        return this.processGetTodoByIdRequest(_response);
+      });
+  }
+
+  protected processGetTodoByIdRequest(
+    response: AxiosResponse
+  ): Promise<FileResponse | null> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === 'object') {
+      for (const k in response.headers) {
+        if (response.headers.hasOwnProperty(k)) {
+          _headers[k] = response.headers[k];
+        }
+      }
+    }
+    if (status === 200 || status === 206) {
+      const contentDisposition = response.headers
+        ? response.headers['content-disposition']
+        : undefined;
+      let fileNameMatch = contentDisposition
+        ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(
+            contentDisposition
+          )
+        : undefined;
+      let fileName =
+        fileNameMatch && fileNameMatch.length > 1
+          ? fileNameMatch[3] || fileNameMatch[2]
+          : undefined;
+      if (fileName) {
+        fileName = decodeURIComponent(fileName);
+      } else {
+        fileNameMatch = contentDisposition
+          ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition)
+          : undefined;
+        fileName =
+          fileNameMatch && fileNameMatch.length > 1
+            ? fileNameMatch[1]
+            : undefined;
+      }
+      return Promise.resolve({
+        fileName: fileName,
+        status: status,
+        data: new Blob([response.data], {
+          type: response.headers['content-type'],
+        }),
+        headers: _headers,
+      });
+    } else if (status !== 200 && status !== 204) {
+      const _responseText = response.data;
+      return throwException(
+        'An unexpected server error occurred.',
+        status,
+        _responseText,
+        _headers
+      );
+    }
+    return Promise.resolve<FileResponse | null>(null as any);
+  }
+
   chagneStateRequest(
     request: ChangeTodoStateRequest,
     cancelToken?: CancelToken
@@ -294,6 +384,97 @@ export class TodosClient {
     return Promise.resolve<FileResponse | null>(null as any);
   }
 
+  removeTodoRequest(
+    id: string,
+    cancelToken?: CancelToken
+  ): Promise<FileResponse | null> {
+    let url_ = this.baseUrl + '/Todos/remove';
+    url_ = url_.replace(/[?&]$/, '');
+
+    const content_ = JSON.stringify(id);
+
+    let options_: AxiosRequestConfig = {
+      data: content_,
+      responseType: 'blob',
+      method: 'POST',
+      url: url_,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/octet-stream',
+      },
+      cancelToken,
+    };
+
+    return this.instance
+      .request(options_)
+      .catch((_error: any) => {
+        if (isAxiosError(_error) && _error.response) {
+          return _error.response;
+        } else {
+          throw _error;
+        }
+      })
+      .then((_response: AxiosResponse) => {
+        return this.processRemoveTodoRequest(_response);
+      });
+  }
+
+  protected processRemoveTodoRequest(
+    response: AxiosResponse
+  ): Promise<FileResponse | null> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && typeof response.headers === 'object') {
+      for (const k in response.headers) {
+        if (response.headers.hasOwnProperty(k)) {
+          _headers[k] = response.headers[k];
+        }
+      }
+    }
+    if (status === 200 || status === 206) {
+      const contentDisposition = response.headers
+        ? response.headers['content-disposition']
+        : undefined;
+      let fileNameMatch = contentDisposition
+        ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(
+            contentDisposition
+          )
+        : undefined;
+      let fileName =
+        fileNameMatch && fileNameMatch.length > 1
+          ? fileNameMatch[3] || fileNameMatch[2]
+          : undefined;
+      if (fileName) {
+        fileName = decodeURIComponent(fileName);
+      } else {
+        fileNameMatch = contentDisposition
+          ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition)
+          : undefined;
+        fileName =
+          fileNameMatch && fileNameMatch.length > 1
+            ? fileNameMatch[1]
+            : undefined;
+      }
+      return Promise.resolve({
+        fileName: fileName,
+        status: status,
+        data: new Blob([response.data], {
+          type: response.headers['content-type'],
+        }),
+        headers: _headers,
+      });
+    } else if (status !== 200 && status !== 204) {
+      const _responseText = response.data;
+      return throwException(
+        'An unexpected server error occurred.',
+        status,
+        _responseText,
+        _headers
+      );
+    }
+    return Promise.resolve<FileResponse | null>(null as any);
+  }
+
   editTodoRequest(
     request: EditTodoRequest,
     cancelToken?: CancelToken
@@ -390,12 +571,14 @@ export interface ChangeTodoStateRequest {
   id: string;
 }
 
-export interface EditTodoRequest {
+export interface CreateTodoRequest {
   todoBody: string;
   date: Date;
 }
 
-export interface CreateTodoRequest extends EditTodoRequest {}
+export interface EditTodoRequest extends CreateTodoRequest {
+  id: string;
+}
 
 export interface Todo {
   id: string;

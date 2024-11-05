@@ -3,19 +3,25 @@ import {
   type Todo,
   type CreateTodoRequest,
   TodosClient,
+  EditTodoRequest,
 } from '../../api/api-client';
-import { ref } from 'vue';
+import { onBeforeMount, ref } from 'vue';
 import axios from 'axios';
 
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const loading = ref(true);
-const data = ref(<Todo[]>[]);
+const data = ref(<Todo>{});
 
-const body = ref(<CreateTodoRequest>{
-  date: new Date(),
-  todoBody: '',
+const props = defineProps<{
+  id: string;
+}>();
+
+onBeforeMount(async () => {
+  await assignDataToClientModel();
 });
 
-async function createNewTodoHandler() {
+async function assignDataToClientModel() {
   loading.value = true;
   const axiosInstance = axios;
   const client = new TodosClient(
@@ -23,23 +29,53 @@ async function createNewTodoHandler() {
     axiosInstance
   );
   await client
-    .createTodoRequest(body.value, undefined)
+    .getTodoByIdRequest(props.id, undefined)
     .then(async (response) => {
       const responseData = await response?.data.text();
-      const dataModel = JSON.parse(responseData!) as Todo[];
+      const dataModel = JSON.parse(responseData!) as Todo;
       if (import.meta.env.VITE_MODE == 'DEVELOPMENT')
         console.log('Fetched data: ', dataModel);
       data.value = dataModel;
     })
     .finally(() => (loading.value = false));
 }
+
+async function editTodoHandler() {
+  loading.value = true;
+  const axiosInstance = axios;
+  const client = new TodosClient(
+    import.meta.env.VITE_API_BASE_PATH,
+    axiosInstance
+  );
+  const body = <EditTodoRequest>{
+    id: props.id,
+    date: new Date(),
+    todoBody: data.value.todoBody,
+  };
+  await client
+    .editTodoRequest(body, undefined)
+    .then(async (response) => {
+      const responseData = await response?.data.text();
+    })
+    .finally(() => {
+      loading.value = false;
+      router.push('/todos');
+    });
+}
 </script>
 
 <template>
   <q-page>
     <div class="row flex-center">
-      <q-input filled v-model="body.todoBody" label="Todo body" />
+      <div class="row flex-center">
+        <q-input filled v-model="data.todoBody" label="Todo body" />
+      </div>
     </div>
-    <q-btn @click="createNewTodoHandler()"> Edit </q-btn>
+    <div class="row flex-center q-ma-md">
+      <q-btn @click="editTodoHandler()"> Edit </q-btn>
+      <RouterLink to="/todos">
+        <q-btn class="q-ml-md"> Back </q-btn>
+      </RouterLink>
+    </div>
   </q-page>
 </template>
