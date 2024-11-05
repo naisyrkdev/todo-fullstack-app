@@ -40,7 +40,6 @@ async function createNewTodoHandler() {
     <div class="row flex-center">
       <q-input filled v-model="body.todoBody" label="Todo body" />
     </div>
-    <q-btn @click="createNewTodoHandler()"> Create </q-btn>
-    <q-btn> Back </q-btn>
+    <q-btn @click="createNewTodoHandler()"> Edit </q-btn>
   </q-page>
 </template>

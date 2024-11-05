@@ -17,6 +17,12 @@ const routes: RouteRecordRaw[] = [
         path: '/todos/create',
         component: () => import('pages/todos/create.vue'),
       },
+      {
+        path: '/todo/edit/:id',
+        name: 'edit-todo',
+        component: () => import('pages/todos/edit[id].vue'),
+        props: true,
+      },
     ],
   },
 

@@ -4,14 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared;
 
-
 namespace Application.TodosFeatures.Commands;
 
 public class ChangeStateTodoCommand : IRequest<IActionResult>
 {
     public Guid Id { get; set; }
-    public string TodoBody { get; set; }
-    public DateTime Date { get; set; }
 }
 
 public class GChangeStateTodoCommandHandler : IRequestHandler<ChangeStateTodoCommand, IActionResult>
@@ -27,8 +24,7 @@ public class GChangeStateTodoCommandHandler : IRequestHandler<ChangeStateTodoCom
     {
         var todoRequested = await _context.Todos.Where(x => x.Id == request.Id).FirstOrDefaultAsync(cancellationToken);
 
-        todoRequested.TodoBody =  request.TodoBody;
-        todoRequested.ExpirenceDate = request.Date;
+        todoRequested.IsDone = !todoRequested.IsDone;
 
         try
         {
@@ -39,7 +35,7 @@ public class GChangeStateTodoCommandHandler : IRequestHandler<ChangeStateTodoCom
             Console.WriteLine(ex.ToString());
         }
 
-        return new OkObjectResult(todoRequested);
+        return new OkObjectResult("Success");
     }
 }
 

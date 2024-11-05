@@ -36,37 +36,7 @@
           @click="$router.push('/todos/create')"
         >
           <q-item-section>
-            <q-item-label>Create My Character</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          @click="$router.push('/shop')"
-        >
-          <q-item-section>
-            <q-item-label>Shop</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          @click="$router.push('/battle')"
-        >
-          <q-item-section>
-            <q-item-label>Battle</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item
-          clickable
-          tag="a"
-          target="_blank"
-          @click="$router.push('/premium')"
-        >
-          <q-item-section>
-            <q-item-label>Premium</q-item-label>
+            <q-item-label>Create</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>

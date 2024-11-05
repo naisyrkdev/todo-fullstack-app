@@ -6,22 +6,22 @@ using Shared;
 
 namespace Application.TodosFeatures.Commands;
 
-public class AddTodoCommand : IRequest<IActionResult>
+public class EditTodoCommand : IRequest<IActionResult>
 {
     public string TodoBody { get; set; }
     public DateTime Date { get; set; }
 }
 
-public class AddTodoCommandHandler : IRequestHandler<AddTodoCommand, IActionResult>
+public class EditTodoCommandHandler : IRequestHandler<EditTodoCommand, IActionResult>
 {
     private readonly IApplicationDbContext _context;
 
-    public AddTodoCommandHandler(IApplicationDbContext context)
+    public EditTodoCommandHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<IActionResult> Handle(AddTodoCommand request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Handle(EditTodoCommand request, CancellationToken cancellationToken)
     {
         var todo = new Todo
         {

@@ -2,7 +2,21 @@ using Domain;
 using Infrastructure;
 using TodoWebApi.Helpers;
 
+var AvailableOrigins = "_availableOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: AvailableOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin()
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                      });
+});
+
 
 // Add services to the container.
 
@@ -31,6 +45,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(AvailableOrigins);
 
 app.UseAuthorization();
 
