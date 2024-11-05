@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Application.Models;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared;
@@ -25,8 +26,10 @@ public class GetTodoByIdQuerydHandler : IRequestHandler<GetTodoByIdQuery, IActio
 
         if (todoFound == null)
             return new BadRequestObjectResult("An error has occured");
-           
-        return new OkObjectResult(todoFound);
+
+        var todoClientModel = TodoClientModelFactory.Create(todoFound);
+
+        return new OkObjectResult(todoClientModel);
     }
 }
 

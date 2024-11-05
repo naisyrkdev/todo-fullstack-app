@@ -1,3 +1,4 @@
+using Application.Models;
 using Domain;
 using Infrastructure;
 using Infrastructure.Helpers;
@@ -30,7 +31,7 @@ builder.Services.AddInfrastructureServices();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerDocument(settings => {
     settings.Title = "Todo API";
-    settings.DocumentProcessors.Add(new AddAdditionalTypeProcessor<Todo>());
+    settings.DocumentProcessors.Add(new AddAdditionalTypeProcessor<TodoClientModel>());
 });
 
 var app = builder.Build();

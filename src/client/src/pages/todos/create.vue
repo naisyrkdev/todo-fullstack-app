@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {
-  type Todo,
+  type TodoClientModel,
   type CreateTodoRequest,
   TodosClient,
 } from '../../api/api-client';
@@ -9,8 +9,9 @@ import axios from 'axios';
 import { useRouter } from 'vue-router';
 
 const loading = ref(true);
-const data = ref(<Todo[]>[]);
+const data = ref(<TodoClientModel[]>[]);
 const router = useRouter();
+const selectedDate = ref('2019/02/01');
 
 const body = ref(<CreateTodoRequest>{
   date: new Date(),
@@ -24,11 +25,12 @@ async function createNewTodoHandler() {
     import.meta.env.VITE_API_BASE_PATH,
     axiosInstance
   );
+  body.value.date = new Date(selectedDate.value);
   await client
     .createTodoRequest(body.value, undefined)
     .then(async (response) => {
       const responseData = await response?.data.text();
-      const dataModel = JSON.parse(responseData!) as Todo[];
+      const dataModel = JSON.parse(responseData!) as TodoClientModel[];
       if (import.meta.env.VITE_MODE == 'DEVELOPMENT')
         console.log('Fetched data: ', dataModel);
       data.value = dataModel;
@@ -42,8 +44,21 @@ async function createNewTodoHandler() {
 
 <template>
   <q-page>
-    <div class="row flex-center">
+    <div class="row flex-center q-ma-md">
       <q-input filled v-model="body.todoBody" label="Todo body" />
+    </div>
+    <div class="row flex-center q-ma-md">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Edit Expiration date</div>
+          {{ selectedDate }}
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <div class="q-gutter-md row items-start">
+            <q-date v-model="selectedDate" title="Select Expiration Date" />
+          </div>
+        </q-card-section>
+      </q-card>
     </div>
     <div class="row flex-center q-ma-md">
       <q-btn @click="createNewTodoHandler()"> Create </q-btn>

@@ -1,12 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain;
 
-namespace Application.Models
+namespace Application.Models;
+
+public class TodoClientModel
 {
-    public class TodoClientModel
+    public Guid Id { get; set; }
+    public string TodoBody { get; set; }
+    public bool IsDone { get; set; }
+    public DateTime ExpirenceDate { get; set; }
+}
+
+public static class TodoClientModelFactory
+{
+    public static TodoClientModel Create(Todo dbModel)
     {
+        return new TodoClientModel()
+        {
+            Id = dbModel.Id,
+            ExpirenceDate = dbModel.ExpirenceDate,
+            IsDone = dbModel.IsDone,    
+            TodoBody = dbModel.TodoBody,
+        };
+    }
+
+    public static List<TodoClientModel> CreateList(List<Todo> dbModel)
+    {
+        return dbModel.Select(Create).ToList();
     }
 }

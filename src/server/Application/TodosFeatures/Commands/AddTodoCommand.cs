@@ -3,12 +3,11 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
-
 namespace Application.TodosFeatures.Commands;
 
 public class AddTodoCommand : IRequest<IActionResult>
 {
-    public string TodoBody { get; set; }
+    public string TodoBody { get; set; } = string.Empty;
     public DateTime Date { get; set; }
 }
 
@@ -23,6 +22,9 @@ public class AddTodoCommandHandler : IRequestHandler<AddTodoCommand, IActionResu
 
     public async Task<IActionResult> Handle(AddTodoCommand request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrEmpty(request.TodoBody))
+            return new BadRequestObjectResult("An error has occured. Body ");
+
         var todo = new Todo
         {
             ExpirenceDate = request.Date,

@@ -1,21 +1,19 @@
 <script setup lang="ts">
 import {
-  type Todo,
-  type CreateTodoRequest,
+  type TodoClientModel,
   TodosClient,
   EditTodoRequest,
 } from '../../api/api-client';
 import { onBeforeMount, ref } from 'vue';
 import axios from 'axios';
-
 import { useRouter } from 'vue-router';
-const router = useRouter();
-const loading = ref(true);
-const data = ref(<Todo>{});
 
 const props = defineProps<{
   id: string;
 }>();
+const router = useRouter();
+const loading = ref(true);
+const data = ref(<TodoClientModel>{});
 
 onBeforeMount(async () => {
   await assignDataToClientModel();
@@ -32,7 +30,7 @@ async function assignDataToClientModel() {
     .getTodoByIdRequest(props.id, undefined)
     .then(async (response) => {
       const responseData = await response?.data.text();
-      const dataModel = JSON.parse(responseData!) as Todo;
+      const dataModel = JSON.parse(responseData!) as TodoClientModel;
       if (import.meta.env.VITE_MODE == 'DEVELOPMENT')
         console.log('Fetched data: ', dataModel);
       data.value = dataModel;
@@ -52,23 +50,23 @@ async function editTodoHandler() {
     date: new Date(),
     todoBody: data.value.todoBody,
   };
-  await client
-    .editTodoRequest(body, undefined)
-    .then(async (response) => {
-      const responseData = await response?.data.text();
-    })
-    .finally(() => {
-      loading.value = false;
-      router.push('/todos');
-    });
+  await client.editTodoRequest(body, undefined).finally(() => {
+    loading.value = false;
+    router.push('/todos');
+  });
 }
 </script>
 
 <template>
   <q-page>
     <div class="row flex-center">
-      <div class="row flex-center">
-        <q-input filled v-model="data.todoBody" label="Todo body" />
+      <div class="row flex-center q-ma-md">
+        <q-input
+          filled
+          v-model="data.todoBody"
+          label="Todo body"
+          maxlength="40"
+        />
       </div>
     </div>
     <div class="row flex-center q-ma-md">

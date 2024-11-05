@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {
-  type Todo,
+  type TodoClientModel,
   type ChangeTodoStateRequest,
   TodosClient,
   EditTodoRequest,
@@ -9,7 +9,7 @@ import { ref, onBeforeMount } from 'vue';
 import axios from 'axios';
 
 const loading = ref(true);
-const data = ref(<Todo[]>[]);
+const data = ref(<TodoClientModel[]>[]);
 const alert = ref(false);
 const selectedDate = ref('2019/02/01');
 const selectedId = ref('');
@@ -29,7 +29,7 @@ async function assignDataToClientModel() {
     .getTodosRequest(undefined)
     .then(async (response) => {
       const responseData = await response?.data.text();
-      const dataModel = JSON.parse(responseData!) as Todo[];
+      const dataModel = JSON.parse(responseData!) as TodoClientModel[];
       if (import.meta.env.VITE_MODE == 'DEVELOPMENT')
         console.log('Fetched data: ', dataModel);
       data.value = dataModel;
@@ -51,7 +51,7 @@ async function changeStateHandler(id: string) {
     .chagneStateRequest(body, undefined)
     .then(async (response) => {
       const responseData = await response?.data.text();
-      const dataModel = JSON.parse(responseData!) as Todo[];
+      const dataModel = JSON.parse(responseData!) as TodoClientModel[];
       if (import.meta.env.VITE_MODE == 'DEVELOPMENT')
         console.log('Fetched data: ', dataModel);
       data.value = dataModel;
@@ -142,7 +142,7 @@ async function removeTodo(id: string) {
       <div v-else>
         <q-list>
           <q-item v-for="todo in data" :key="todo.id">
-            <div class="q-ma-md">
+            <div class="q-ma-md" :class="{ 'crossed-out-text': todo.isDone }">
               <a class="text-weight-bold q-mr-md">
                 {{ todo.todoBody }}
               </a>
@@ -156,11 +156,9 @@ async function removeTodo(id: string) {
             <q-btn @click="showDatePopup(todo.id)"> Change Date </q-btn>
             <q-btn @click="removeTodo(todo.id)" class="q-ml-md"> Remove </q-btn>
 
-            <q-btn class="q-ml-md">
-              <RouterLink :to="{ name: 'edit-todo', params: { id: todo.id } }">
-                Edit
-              </RouterLink></q-btn
-            >
+            <RouterLink :to="{ name: 'edit-todo', params: { id: todo.id } }">
+              <q-btn class="q-ml-md" size="xl"> Edit </q-btn>
+            </RouterLink>
           </q-item>
         </q-list>
       </div>
@@ -172,3 +170,9 @@ async function removeTodo(id: string) {
     </div>
   </q-page>
 </template>
+
+<style scoped>
+.crossed-out-text {
+  text-decoration: line-through !important;
+}
+</style>

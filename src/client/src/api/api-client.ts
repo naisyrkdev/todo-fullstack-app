@@ -580,7 +580,7 @@ export interface EditTodoRequest extends CreateTodoRequest {
   id: string;
 }
 
-export interface Todo {
+export interface TodoClientModel {
   id: string;
   todoBody: string;
   isDone: boolean;

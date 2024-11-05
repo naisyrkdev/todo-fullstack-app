@@ -2,7 +2,7 @@ todo-fullstack-app
 
 Fullstack todo web app with Vue + Dotnet
 
-To run server, from **src/server/TodoWebApi **directory run in cmd/console:
+To run server, from **src/server/TodoWebApi** directory run in cmd/console:
 
 `dotnet run --urls=https://localhost:44393/`
 
@@ -14,9 +14,9 @@ directory
 
 or
 
-` yarn install`
+`yarn install`
 
-To run client from src/client directory type:
+To run client from **src/client** directory type:
 
 `npx quasar dev`
 
