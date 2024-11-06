@@ -33,8 +33,8 @@ public class EditTodoCommandHandler : IRequestHandler<EditTodoCommand, IActionRe
         if (!string.IsNullOrEmpty(request.TodoBody))
             todoRequested.TodoBody = request.TodoBody;
 
-        todoRequested.ExpirenceDate = request.Date;
-
+        todoRequested.ExpirenceDate = new DateTime(request.Date.Year, request.Date.Month, (request.Date.Day + 1));
+        
         _context.Todos.Update(todoRequested);
 
         try

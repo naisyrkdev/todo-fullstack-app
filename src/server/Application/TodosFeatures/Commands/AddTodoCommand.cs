@@ -23,11 +23,14 @@ public class AddTodoCommandHandler : IRequestHandler<AddTodoCommand, IActionResu
     public async Task<IActionResult> Handle(AddTodoCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrEmpty(request.TodoBody))
-            return new BadRequestObjectResult("An error has occured. Body ");
+            return new OkObjectResult("Todo body cannot be empty");
+
+        if(request.TodoBody.Length > 50)
+            return new OkObjectResult("Todo body cannot extends 50 characters");
 
         var todo = new Todo
         {
-            ExpirenceDate = request.Date,
+            ExpirenceDate = new DateTime(request.Date.Year, request.Date.Month, (request.Date.Day + 1)),
             TodoBody = request.TodoBody,
         };
 

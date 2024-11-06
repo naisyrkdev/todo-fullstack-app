@@ -11,7 +11,7 @@ import { useRouter } from 'vue-router';
 const loading = ref(true);
 const data = ref(<TodoClientModel[]>[]);
 const router = useRouter();
-const selectedDate = ref('2019/02/01');
+const selectedDate = ref('2024/11/06');
 
 const body = ref(<CreateTodoRequest>{
   date: new Date(),
@@ -31,8 +31,6 @@ async function createNewTodoHandler() {
     .then(async (response) => {
       const responseData = await response?.data.text();
       const dataModel = JSON.parse(responseData!) as TodoClientModel[];
-      if (import.meta.env.VITE_MODE == 'DEVELOPMENT')
-        console.log('Fetched data: ', dataModel);
       data.value = dataModel;
     })
     .finally(() => {

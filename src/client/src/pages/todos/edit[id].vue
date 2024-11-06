@@ -31,8 +31,6 @@ async function assignDataToClientModel() {
     .then(async (response) => {
       const responseData = await response?.data.text();
       const dataModel = JSON.parse(responseData!) as TodoClientModel;
-      if (import.meta.env.VITE_MODE == 'DEVELOPMENT')
-        console.log('Fetched data: ', dataModel);
       data.value = dataModel;
     })
     .finally(() => (loading.value = false));

@@ -12,6 +12,7 @@ const loading = ref(true);
 const data = ref(<TodoClientModel[]>[]);
 const alert = ref(false);
 const selectedDate = ref('2019/02/01');
+const selectedDateFilter = ref('');
 const selectedId = ref('');
 
 onBeforeMount(async () => {
@@ -97,11 +98,30 @@ async function removeTodo(id: string) {
   await client
     .removeTodoRequest(id, undefined)
     .then(async () => {
-      await assignDataToClientModel();
+      if (selectedDateFilter.value == null) await assignDataToClientModel();
+      else await filterByDateAndAssignToModel();
     })
     .finally(() => {
       loading.value = false;
     });
+}
+
+async function filterByDateAndAssignToModel() {
+  loading.value = true;
+  const axiosInstance = axios;
+  const client = new TodosClient(
+    import.meta.env.VITE_API_BASE_PATH,
+    axiosInstance
+  );
+  const filterDate = new Date(selectedDateFilter.value);
+  await client
+    .getTodosByDateRequest(filterDate, undefined)
+    .then(async (response) => {
+      const responseData = await response?.data.text();
+      const dataModel = JSON.parse(responseData!) as TodoClientModel[];
+      data.value = dataModel;
+    })
+    .finally(() => (loading.value = false));
 }
 </script>
 
@@ -136,29 +156,51 @@ async function removeTodo(id: string) {
         <q-spinner color="primary" size="5em" :thickness="15" />
       </div>
       <div v-else>
-        <q-list>
-          <q-item v-for="todo in data" :key="todo.id">
-            <div class="q-ma-md" :class="{ 'crossed-out-text': todo.isDone }">
-              {{ todo.todoBody }} has to be done before
-              {{ todo.expirationDateString }}
-            </div>
-            <q-checkbox
-              v-model="todo.isDone"
-              @click="changeStateHandler(todo.id)"
-            />
-            <q-btn @click="showDatePopup(todo.id, todo.expirationDateString)">
-              Change Date
-            </q-btn>
-            <q-btn @click="removeTodo(todo.id)" class="q-ml-md"> Remove </q-btn>
-
-            <RouterLink :to="{ name: 'edit-todo', params: { id: todo.id } }">
-              <q-btn class="q-ml-md" size="xl"> Edit </q-btn>
-            </RouterLink>
-          </q-item>
-        </q-list>
+        <div class="col">
+          <div class="row flex-center q-ma-md">
+            <q-card>
+              <q-card-section>
+                <div class="text-h6">Filter by Date</div>
+                {{ selectedDateFilter }}
+              </q-card-section>
+              <q-card-section class="q-pt-none">
+                <div class="q-gutter-md row items-start">
+                  <q-date
+                    v-model="selectedDateFilter"
+                    title="Select Expiration Date"
+                  />
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
+          <div class="row flex-center q-ma-md">
+            <q-btn @click="filterByDateAndAssignToModel()"> Filter </q-btn>
+          </div>
+          <q-list>
+            <q-item v-for="todo in data" :key="todo.id">
+              <div class="q-ma-md" :class="{ 'crossed-out-text': todo.isDone }">
+                {{ todo.todoBody }} has to be done before
+                {{ todo.expirationDateString }}
+              </div>
+              <q-checkbox
+                v-model="todo.isDone"
+                @click="changeStateHandler(todo.id)"
+              />
+              <q-btn @click="showDatePopup(todo.id, todo.expirationDateString)">
+                Change Date
+              </q-btn>
+              <q-btn @click="removeTodo(todo.id)" class="q-ml-md">
+                Remove
+              </q-btn>
+              <RouterLink :to="{ name: 'edit-todo', params: { id: todo.id } }">
+                <q-btn class="q-ml-md" size="xl"> Edit </q-btn>
+              </RouterLink>
+            </q-item>
+          </q-list>
+        </div>
       </div>
     </div>
-    <div class="row flex-center q-mt-md">
+    <div class="row flex-center">
       <RouterLink to="/todos/create">
         <q-btn class="q-ml-md"> Create </q-btn>
       </RouterLink>

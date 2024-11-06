@@ -1,5 +1,4 @@
 ﻿using Application.Models;
-using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +21,7 @@ public class GetTodosQuerydHandler : IRequestHandler<GetTodosQuery, IActionResul
 
     public async Task<IActionResult> Handle(GetTodosQuery request, CancellationToken cancellationToken)
     {
-        var todos = await _context.Todos.ToListAsync(cancellationToken);
+        var todos = await _context.Todos.AsNoTracking().ToListAsync(cancellationToken);
 
         var todoClientModel = TodoClientModelFactory.CreateList(todos);
 

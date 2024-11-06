@@ -30,6 +30,16 @@
           clickable
           tag="a"
           target="_blank"
+          @click="$router.push('/todos/calendar')"
+        >
+          <q-item-section>
+            <q-item-label>Calendar</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          clickable
+          tag="a"
+          target="_blank"
           @click="$router.push('/todos/create')"
         >
           <q-item-section>

@@ -24,6 +24,15 @@ namespace TodoWebApi.Controllers
             });
         }
 
+        [HttpPost("by-date")]
+        public async Task<IActionResult> GetTodosByDateRequest([FromBody] DateTime filterDate)
+        {
+            return await Mediator.Send(new GetTodosByDateQuery
+            {
+                FilterDate = filterDate
+            });
+        }
+
         [HttpPost("change-state")]
         public async Task<IActionResult> ChagneStateRequest([FromBody] ChangeTodoStateRequest request)
         {

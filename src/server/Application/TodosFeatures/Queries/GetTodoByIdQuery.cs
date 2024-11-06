@@ -22,7 +22,9 @@ public class GetTodoByIdQuerydHandler : IRequestHandler<GetTodoByIdQuery, IActio
 
     public async Task<IActionResult> Handle(GetTodoByIdQuery request, CancellationToken cancellationToken)
     {
-        var todoFound = await _context.Todos.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var todoFound = await _context.Todos
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (todoFound == null)
             return new BadRequestObjectResult("An error has occured");

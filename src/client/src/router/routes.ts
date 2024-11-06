@@ -14,6 +14,10 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/todos/index.vue'),
       },
       {
+        path: '/todos/calendar',
+        component: () => import('pages/todos/calendar.vue'),
+      },
+      {
         path: '/todos/create',
         component: () => import('pages/todos/create.vue'),
       },
