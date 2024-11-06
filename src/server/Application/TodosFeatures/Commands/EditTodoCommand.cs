@@ -30,6 +30,9 @@ public class EditTodoCommandHandler : IRequestHandler<EditTodoCommand, IActionRe
         if (todoRequested == null)
             return new BadRequestObjectResult("");
 
+        if (request.TodoBody.Length > 50)
+            return new OkObjectResult("Todo body cannot extends 50 characters");
+
         if (!string.IsNullOrEmpty(request.TodoBody))
             todoRequested.TodoBody = request.TodoBody;
 

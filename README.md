@@ -12,11 +12,7 @@ directory
 
 `npm install`
 
-or
-
-`yarn install`
-
-To run client from **src/client** directory type:
+Next run web client from **src/client** directory type:
 
 `npx quasar dev`
 

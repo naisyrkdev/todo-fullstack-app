@@ -1,0 +1,32 @@
+Witam, 
+dodatkowo załączam opis/instrukcje - jest to rozszerzenie Readme.md
+
+Notatka:
+
+W treści zadania było napisane, że ma być aplikacja ASP.NET - odpuściłem MVC (nie responswyny, być może dłuższy dev) 
+i Blazora (nie czuje się pewnie żeby szybko posuwać projekt, rzadko korzystam). Akurat w tych wcześniej wymienionych ma doświadczenie, 
+z WinFormsami tylko powierzchowne.
+Dlatego użyłem Vue, pomyślałem, że moży to być OK, skoro w ofercie pracy była zawarta znajomość Vue.
+
+Stack: 
+	Frontend: Vue3 z Quasarem (żeby mieć gotowy layout, komponenty do wykorzystnia)
+	Backend: Dotnet w CQRS patternie (być może trochę "overkill" dla tak małej aplikacji), z InMemoryDatabase jako db provider.
+
+Aby uruchmić serwer z folderu /src/server/TodoWebApi należy uruchomić komende: 
+dotnet run --urls=https://localhost:44393/
+
+Instrukcja:
+
+Aby uruchomić klienta web, najpierw trzeba zainstalować paczki node w /src/client
+npm install
+
+Jak już się zainstalują to użyć komendy:
+npx quasar dev (domyślna przeglądarka powinna się sama otworzyć)
+
+Powinno od razu działać, ustawiłem tak porty aby się od razu zgadzały, gdyby był jakiś problem to 
+należy zmienić domyślny URL dla API na froncie tj. w pliku /src/client/.env w pozycji: VITE_API_BASE_PATH
+
+Czego nie zrobiłem:
+FluentValidation,
+Nie używałem żadnego mapera - zrobiłem jedną fabryke bo to tylko jeden model.
+
